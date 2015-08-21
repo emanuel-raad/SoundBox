@@ -8,7 +8,7 @@
         <item name="colorAccent">@color/gray</item>
 
         <item name="android:colorBackground">@color/soothing_blue</item>
-        <item name="android:buttonStyle">@style/BeatBoxButton</item>
+        <!--<item name="android:buttonStyle">@style/BeatBoxButton</item>-->
     </style>
 
     <!-- Example of inheritance -->

@@ -3,4 +3,9 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="new_sound_pack">Enter your new soundpack\'s name</string>
+    <string name="new_audio">Enter the recording\'s name</string>
+    <string name="sound_pack_not_valid">Soundpack name not valid!</string>
+    <string name="audio_not_valid">Audio name not valid!</string>
+    <string name="file_already_exists">File already exists!</string>
 </resources>

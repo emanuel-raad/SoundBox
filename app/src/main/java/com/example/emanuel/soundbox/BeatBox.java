@@ -17,36 +17,33 @@ import java.util.List;
 public class BeatBox {
     private static final String TAG = "BeatBox";
 
-    //private static final String SOUNDS_FOLDER = "sample_sounds";
-    private static final String SOUNDS_FOLDER = "sfayla";
     private static final int MAX_SOUNDS = 5;
 
-    private AssetManager mAssets;
     private List<Sound> mSounds;
     private SoundPool mSoundPool;
 
+    private String mSoundsFolder;
 
-    public BeatBox(Context context) {
-        mAssets = context.getAssets();
+    public BeatBox(String folderName) {
         // Deprecated, but needed for compatibility
         mSoundPool = new SoundPool(MAX_SOUNDS, AudioManager.STREAM_MUSIC, 0);
+        mSoundsFolder = folderName;
         loadSounds();
     }
 
     private void loadSounds() {
-        String[] soundNames;
+        String[] filesInDirectory;
         try {
-            soundNames = mAssets.list(SOUNDS_FOLDER);
-            Log.i(TAG, "Found " + soundNames.length + " sounds");
+            filesInDirectory = DirectoryHelper.listFilesInDir(mSoundsFolder);
         } catch (IOException ioe) {
             Log.e(TAG, "Could not list assets", ioe);
             return;
         }
 
-        mSounds = new ArrayList<Sound>();
-        for (String filename : soundNames) {
+        mSounds = new ArrayList<>();
+        for (String filename : filesInDirectory) {
             try{
-                String assetPath = SOUNDS_FOLDER + "/" + filename;
+                String assetPath = DirectoryHelper.getDirLocation(mSoundsFolder) + "/" + filename;
                 Sound sound = new Sound(assetPath);
                 load(sound);
                 mSounds.add(sound);
@@ -57,8 +54,8 @@ public class BeatBox {
     }
 
     private void load(Sound sound) throws IOException {
-        AssetFileDescriptor afd = mAssets.openFd(sound.getAssetPath());
-        int soundId = mSoundPool.load(afd, 1);
+        String path = sound.getExternalPath();
+        int soundId = mSoundPool.load(path, 1);
         sound.setSoundId(soundId);
     }
 
@@ -76,5 +73,9 @@ public class BeatBox {
 
     public List<Sound> getSounds() {
         return mSounds;
+    }
+
+    public String getSoundsFolder() {
+        return mSoundsFolder;
     }
 }

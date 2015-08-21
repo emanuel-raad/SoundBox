@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_margin="8dp"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <!-- The buttons are wrapped inside a FrameLayout.
@@ -12,10 +12,10 @@
     -->
 
     <Button
-        android:id="@+id/list_item_sound_button"
-        android:layout_width="100dp"
+        android:id="@+id/list_beatbox_button"
+        android:layout_width="match_parent"
         android:layout_height="100dp"
         android:layout_gravity="center"
-        style="@style/BeatBoxButton"
+        style="@style/BeatPackButton"
         tools:text="Sound name"/>
 </FrameLayout>

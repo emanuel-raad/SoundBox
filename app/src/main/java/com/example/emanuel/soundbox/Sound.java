@@ -5,20 +5,15 @@ package com.example.emanuel.soundbox;
  */
 public class Sound {
 
-    private String mAssetPath;
     private String mName;
     private Integer mSoundId; // An  Integer can have a null value, while an int can't
+    private String mExternalPath;
 
     public Sound(String assetPath) {
-        mAssetPath = assetPath;
+        mExternalPath = assetPath;
         String[] components = assetPath.split("/");
         String filename = components[components.length - 1];
-        //mName = filename.replace(".wav", "");
-        mName = filename.replace(".m4a", "");
-    }
-
-    public String getAssetPath() {
-        return mAssetPath;
+        mName = DirectoryHelper.removeExtension(filename);
     }
 
     public String getName() {
@@ -32,4 +27,9 @@ public class Sound {
     public void setSoundId(Integer soundId) {
         mSoundId = soundId;
     }
+
+    public String getExternalPath() {
+        return mExternalPath;
+    }
+
 }
