@@ -41,7 +41,7 @@ public abstract class EditTextDialog extends DialogFragment {
     private boolean validate (String text) {
         if (!(text.isEmpty() && (text != null))) {
             text = text.trim();
-            String regex = "^[a-zA-Z0-9_ ]+$";
+            String regex = "^[a-zA-Z0-9_' ]+$";
             return text.matches(regex);
         } else return false;
     }

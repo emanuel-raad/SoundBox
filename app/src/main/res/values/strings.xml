@@ -8,4 +8,5 @@
     <string name="sound_pack_not_valid">Soundpack name not valid!</string>
     <string name="audio_not_valid">Audio name not valid!</string>
     <string name="file_already_exists">File already exists!</string>
+    <string name="delete_sound">Delete sound</string>
 </resources>

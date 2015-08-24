@@ -2,9 +2,9 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_margin="8dp"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground">
 
     <!-- The buttons are wrapped inside a FrameLayout.
          That way, when RecyclerView stretches to fit 3 columns,
@@ -15,6 +15,7 @@
         android:id="@+id/list_beatbox_button"
         android:layout_width="match_parent"
         android:layout_height="100dp"
+        android:layout_margin="8dp"
         android:layout_gravity="center"
         style="@style/BeatPackButton"
         tools:text="Sound name"/>

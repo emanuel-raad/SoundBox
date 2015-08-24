@@ -3,6 +3,8 @@ package com.example.emanuel.soundbox;
 import android.os.Environment;
 import android.util.Log;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,7 +28,7 @@ public class DirectoryHelper {
 
         for (File file : possibleFolders) {
             if (file.isDirectory() && file.exists() && file.canWrite()) {
-                folders.add(cleanFolderName(file.toString()));
+                folders.add(file.toString());
                 Log.d(TAG, file.toString() + " is a directory");
             }
         }
@@ -34,14 +36,21 @@ public class DirectoryHelper {
         return folders;
     }
 
-    public static String[] listFilesInDir(String parentDir) throws IOException {
+    public static List<String> listFilesInDir(String parentDir) throws IOException {
 
         File voiceRecordingDirectory = new File(Environment.getExternalStorageDirectory()
                 + "/beatbox/" + parentDir);
 
         String[] possibleFiles = voiceRecordingDirectory.list();
+        List<String> realFiles = new ArrayList<>();
 
-        return possibleFiles;
+        for (String possibleFile : possibleFiles) {
+            if (!(possibleFile.startsWith("."))) {
+                realFiles.add(possibleFile);
+            }
+        }
+
+        return realFiles;
     }
 
     public static String getDirLocation(String dir) {
@@ -56,6 +65,16 @@ public class DirectoryHelper {
         if (!voiceRecordingDirectory.exists()){
             Log.d(TAG, "aight making dir");
             voiceRecordingDirectory.mkdirs();
+            String fileName = voiceRecordingDirectory.toString() + "/.nomedia";
+            File file = new File(fileName);
+            if (!file.exists()) {
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
             return true;
         } else {
             return false;
@@ -81,5 +100,25 @@ public class DirectoryHelper {
         String[] components = folderName.split("/");
         String filename = components[components.length - 1];
         return filename;
+    }
+
+    public static boolean deleteDirectory(File file) {
+        try {
+            FileUtils.deleteDirectory(file);
+            return true;
+        } catch (Exception e) {
+            Log.e(TAG, "naaaah i aint deleting that", e);
+            return false;
+        }
+    }
+
+    public static boolean deleteFile(File file) {
+        try {
+            file.delete();
+            return true;
+        } catch (Exception e) {
+            Log.e(TAG, "Sorry didnt work", e);
+            return false;
+        }
     }
 }

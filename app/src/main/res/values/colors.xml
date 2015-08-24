@@ -5,4 +5,14 @@
     <color name="gray">#607D8B</color>
     <color name="soothing_blue">#0083BF</color>
     <color name="dark_blue">#005A8A</color>
+    <color name="dark_mint">#00BFA5</color>
+    <color name="mint">#1DE9B6</color>
+    <color name="white">#F5F4E6</color>
+    <color name="outline_mint">#006064</color>
+
+    <color name="accent">#607D8B</color>
+    <color name="primary">#00BCD4</color>
+    <color name="darkp">#0097A7</color>
+    <color name="lightp">#B2EBF2</color>
+    <color name="outline_grey">#727272</color>
 </resources>

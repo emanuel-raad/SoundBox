@@ -9,13 +9,23 @@ import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.NavUtils;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback;
+import com.bignerdranch.android.multiselector.MultiSelector;
+import com.bignerdranch.android.multiselector.SwappingHolder;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,13 +46,72 @@ public class BeatBoxFragment extends Fragment {
     private BeatBox mBeatBox;
     private String mFolderName;
     private Uri mUri;
-    private SoundAdapter mAdapter;
-    private RecyclerView mRecycleView;
 
     private FloatingActionButton mFloatingActionButton;
 
     private static final String EXTRA_FOLDER_NAME =
             "com.example.emanuel.soundbox.folder_name";
+
+    private static final String TAG = "BeatBoxFragment";
+
+    private SoundAdapter mAdapter;
+    private RecyclerView mRecycleView;
+    private MultiSelector mMultiSelector = new MultiSelector();
+    private ModalMultiSelectorCallback mDeleteMode = new ModalMultiSelectorCallback(mMultiSelector) {
+        @Override
+        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+            super.onCreateActionMode(actionMode, menu);
+            getActivity().getMenuInflater().inflate(R.menu.context_sounds, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+            if (menuItem.getItemId() == R.id.menu_item_delete_sound) {
+                actionMode.finish();
+
+                for (int i = mBeatBox.getSounds().size(); i >= 0; i--) {
+                    if (mMultiSelector.isSelected(i, 0)) {
+                        String file = mBeatBox.getSounds().get(i).getExternalPath();
+                        DirectoryHelper.deleteFile(new File(file));
+                        mBeatBox.getSounds().remove(i);
+                        mRecycleView.getAdapter().notifyItemRemoved(i);
+                    }
+                }
+
+                mMultiSelector.clearSelections();
+                return true;
+            }
+            return false;
+        }
+    };
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+
+        if (mMultiSelector != null) {
+            Bundle bundle = savedInstanceState;
+            if (bundle != null) {
+                mMultiSelector.restoreSelectionStates(bundle.getBundle(TAG));
+            }
+
+            if (mMultiSelector.isSelectable()) {
+                if (mDeleteMode != null) {
+                    mDeleteMode.setClearOnPrepare(false);
+                    ((AppCompatActivity) getActivity()).startSupportActionMode(mDeleteMode);
+                }
+
+            }
+        }
+
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putBundle(TAG, mMultiSelector.saveSelectionStates());
+        super.onSaveInstanceState(outState);
+    }
 
     public static BeatBoxFragment newInstance(String folderName) {
         Bundle args = new Bundle();
@@ -58,6 +127,7 @@ public class BeatBoxFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        setHasOptionsMenu(true);
 
         mFolderName = (String) getArguments().getSerializable(EXTRA_FOLDER_NAME);
 
@@ -153,6 +223,11 @@ public class BeatBoxFragment extends Fragment {
         mRecycleView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
         mRecycleView.setAdapter(new SoundAdapter(mBeatBox.getSounds()));
 
+        if (NavUtils.getParentActivityName(getActivity()) != null) {
+            ((AppCompatActivity)getActivity()).getSupportActionBar()
+                    .setDisplayHomeAsUpEnabled(true);
+        }
+
         try {
             updateUI();
         } catch (IOException e) {
@@ -168,19 +243,24 @@ public class BeatBoxFragment extends Fragment {
             }
         });
 
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(mBeatBox.getSoundsFolder());
+
         return view;
     }
 
-    private class SoundHolder extends RecyclerView.ViewHolder
-            implements View.OnClickListener {
+    private class SoundHolder extends SwappingHolder
+            implements View.OnClickListener, View.OnLongClickListener {
         private Button mButton;
         private Sound mSound;
 
-        public SoundHolder(LayoutInflater inflater, ViewGroup container) {
-            super(inflater.inflate(R.layout.list_item_sound, container, false));
+        public SoundHolder(View itemView) {
+            super(itemView, mMultiSelector);
 
             mButton = (Button) itemView.findViewById(R.id.list_item_sound_button);
+
             mButton.setOnClickListener(this);
+            mButton.setLongClickable(true);
+            mButton.setOnLongClickListener(this);
         }
 
         public void bindSound(Sound sound) {
@@ -190,7 +270,16 @@ public class BeatBoxFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            mBeatBox.play(mSound);
+            if (!mMultiSelector.tapSelection(this)){
+                mBeatBox.play(mSound);
+            }
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            ((AppCompatActivity) getActivity()).startSupportActionMode(mDeleteMode);
+            mMultiSelector.setSelected(this, true);
+            return true;
         }
     }
 
@@ -204,8 +293,9 @@ public class BeatBoxFragment extends Fragment {
 
         @Override
         public SoundHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            LayoutInflater inflater = LayoutInflater.from(getActivity());
-            return new SoundHolder(inflater, parent);
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.list_item_sound, parent, false);
+            return new SoundHolder(view);
         }
 
         @Override
@@ -239,9 +329,34 @@ public class BeatBoxFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mRecycleView.getAdapter().notifyDataSetChanged();
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         mBeatBox.release();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()){
+            case android.R.id.home:
+                if (NavUtils.getParentActivityName(getActivity()) != null) {
+                    NavUtils.navigateUpFromSameTask(getActivity());
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        getActivity().getMenuInflater().inflate(R.menu.context_sounds, menu);
     }
 
 }

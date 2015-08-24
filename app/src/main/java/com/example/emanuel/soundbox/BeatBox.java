@@ -25,14 +25,13 @@ public class BeatBox {
     private String mSoundsFolder;
 
     public BeatBox(String folderName) {
-        // Deprecated, but needed for compatibility
         mSoundPool = new SoundPool(MAX_SOUNDS, AudioManager.STREAM_MUSIC, 0);
         mSoundsFolder = folderName;
         loadSounds();
     }
 
     private void loadSounds() {
-        String[] filesInDirectory;
+        List<String> filesInDirectory;
         try {
             filesInDirectory = DirectoryHelper.listFilesInDir(mSoundsFolder);
         } catch (IOException ioe) {
