@@ -3,6 +3,8 @@ package com.example.emanuel.soundbox;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.widget.Toast;
 
 /**
  * Created by Emanuel on 20/08/2015.
@@ -24,4 +26,16 @@ public class BeatBoxActivity extends SingleFragmentActivity {
         String folderName = getIntent().getStringExtra(EXTRA_FOLDER_NAME);
         return BeatBoxFragment.newInstance(folderName);
     }
+
+    /*
+    @Override
+    public void onBackPressed() {
+        Toast.makeText(BeatBoxActivity.this, "Back pressed!", Toast.LENGTH_SHORT).show();
+        FragmentManager fm = getSupportFragmentManager();
+        fm.beginTransaction()
+                .setCustomAnimations(R.anim.slide_left, R.anim.slide_right)
+                .replace(R.id.fragmentContainer, BeatBoxListFragment.newInstance())
+                .commit();
+    }*/
+
 }

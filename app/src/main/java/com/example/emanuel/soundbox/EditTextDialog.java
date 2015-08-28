@@ -59,6 +59,8 @@ public abstract class EditTextDialog extends DialogFragment {
                 .setPositiveButton(android.R.string.ok, null)
                 .create();
 
+        d.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+
         d.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {

@@ -347,6 +347,7 @@ public class BeatBoxFragment extends Fragment {
             case android.R.id.home:
                 if (NavUtils.getParentActivityName(getActivity()) != null) {
                     NavUtils.navigateUpFromSameTask(getActivity());
+                    //getActivity().onBackPressed();
                 }
                 return true;
             default:

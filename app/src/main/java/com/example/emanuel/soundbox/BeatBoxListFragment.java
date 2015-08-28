@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback;
 import com.bignerdranch.android.multiselector.MultiSelector;
@@ -162,22 +163,30 @@ public class BeatBoxListFragment extends Fragment {
             implements View.OnClickListener, View.OnLongClickListener{
 
         private Button mButton;
+        private TextView mTextView;
         private String mFolderName;
 
         @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         public FolderHolder(View itemView) {
             super(itemView, mMultiSelector);
 
-            mButton = (Button) itemView.findViewById(R.id.list_beatbox_button);
+            //mButton = (Button) itemView.findViewById(R.id.list_beatbox_button);
+            mTextView = (TextView) itemView.findViewById(R.id.list_beatbox_button);
 
-            mButton.setOnClickListener(this);
+            /*mButton.setOnClickListener(this);
             mButton.setLongClickable(true);
-            mButton.setOnLongClickListener(this);
+            mButton.setOnLongClickListener(this);*/
+
+            mTextView.setOnClickListener(this);
+            mTextView.setLongClickable(true);
+            mTextView.setOnLongClickListener(this);
+
         }
 
         public void bindFile(String fileName) {
             mFolderName = DirectoryHelper.cleanFolderName(fileName);
-            mButton.setText(mFolderName.replace("_", " "));
+            //mButton.setText(mFolderName.replace("_", " ").toString());
+            mTextView.setText(mFolderName.replace("_", " ").toString());
         }
 
         @Override

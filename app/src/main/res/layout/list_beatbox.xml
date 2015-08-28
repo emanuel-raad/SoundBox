@@ -11,11 +11,12 @@
          it stretches the FrameLayout instead of the buttons.
     -->
 
-    <Button
+    <TextView
         android:id="@+id/list_beatbox_button"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:layout_margin="8dp"
+        android:layout_margin="16dp"
+
         android:layout_gravity="center"
         style="@style/BeatPackButton"
         tools:text="Sound name"/>
